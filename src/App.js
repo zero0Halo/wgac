@@ -1,10 +1,20 @@
 import {useMemo} from 'react';
 import useRefDimensions from "./useRefDimensions";
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 const StyledApp = styled('div')`
   min-height: 100vh;
   padding: 0;
+`;
+
+const slideIn = keyframes`
+    from {
+      transform: translateY(0%);
+    }
+
+    to {
+      transform: translateY(100vh);
+    }
 `;
 
 const StyledPooLine = styled('div')`
@@ -17,6 +27,10 @@ const StyledPooLine = styled('div')`
   overflow: hidden;
   position: absolute;
   top: ${({topPosition}) => topPosition}px;
+  animation-duration: ${({animationSpeed}) => animationSpeed}s;
+  animation-fill-mode: forwards;
+  animation-name: ${slideIn};
+  animation-timing-function: linear;
 `;
 
 export default function App() {
@@ -29,6 +43,7 @@ export default function App() {
     if (node) {
       const numOfColumns = Math.floor(appRefDimensions.width / lineWidthBase);
       const data = [...new Array(Math.floor(numOfColumns))].map((_, i) => ({
+        animationSpeed: Math.random() * lineWidthBase + lineVariance,
         leftPosition: Math.random() * (appRefDimensions.width + lineWidthBase),
         lineWidth: Math.random() * (lineWidthBase + lineVariance) + (lineWidthBase / 2),
         topPosition: Math.random() * (lineWidthBase * lineVariance),
