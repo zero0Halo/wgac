@@ -12,6 +12,7 @@ export default function useWaterfallState({ pageWidth, lineWidthBase, lineVarian
   }),[lineVariance, lineWidthBase, pageWidth]);
 
   const addLineData = useCallback(() => {
+    console.log('fired')
     setData((prevData) => {
       for (let a = 0; a < lineVariance; a++) {
         prevData.push(createLineData());
@@ -20,13 +21,17 @@ export default function useWaterfallState({ pageWidth, lineWidthBase, lineVarian
     })
   }, [createLineData, lineVariance]);
 
+  const regenerateData = useCallback(() => {
+    setData([]);
+  }, [])
+
   useEffect(() => {
     if (!data.length && pageWidth) {
-      const numOfColumns = Math.floor(pageWidth / lineWidthBase);
+      const numOfColumns = Math.floor(pageWidth / lineWidthBase / 2);
       const initialData = [...new Array(Math.floor(numOfColumns))].map(() => createLineData());
       setData(initialData);
     }
   }, [createLineData, data.length, lineWidthBase, pageWidth]);
 
-  return [data, addLineData];
+  return [data, addLineData, regenerateData];
 }

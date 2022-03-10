@@ -30,6 +30,7 @@ const StyledStartButton = styled('button').attrs({ type: 'button'})`
   padding: 0.5rem 2rem;
   position: relative;
   transition: all 250ms;
+  width: auto;
   z-index: 1;
 
   &:hover {
@@ -73,18 +74,13 @@ export default function App() {
   });
 
   const handleClick = () => {
-    if (runMatrix) {
-      setRunMatrix(false);
-      timerDispatch({ type: ACTIONS.STOP_TIMER });
-    } else {
-      setRunMatrix(true);
-      timerDispatch({ type: ACTIONS.START_TIMER, payload: 4 });
-    }
+    setRunMatrix(true);
+    timerDispatch({ type: ACTIONS.START_TIMER, payload: 4 });
   }
 
   return (
     <StyledApp ref={appRef}>
-      <StyledStartButton onClick={handleClick}>{runMatrix ? 'Nevermind...' : 'Enter the Matrix'}</StyledStartButton>
+      <StyledStartButton onClick={handleClick}>Enter the Matrix</StyledStartButton>
 
       {/* I know, the key isn't really unique despite what we talked about in the interview. */}
       {runMatrix && data.map(({emojiCount, ...data}, i) => (
