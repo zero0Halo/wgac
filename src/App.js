@@ -26,12 +26,12 @@ const StyledStartButton = styled('button').attrs({ type: 'button'})`
   font-size: 2rem;
   font-weight: bold;
   left: 50%;
-  padding: 0.5rem 2rem;
+  padding: 0.5rem;
   position: fixed;
   top: 50%;
   transform: translate3D(-50%, -50%, 0);
   transition: all 1s;
-  width: 25rem;
+  width: 22.5rem;
   z-index: 1;
 
   &:hover {
@@ -40,9 +40,8 @@ const StyledStartButton = styled('button').attrs({ type: 'button'})`
 
   ${({ timerRunning }) => timerRunning && css`
     font-size: 1rem;
-    width: 12.5rem;
+    width: 15rem;
     top: 95%;
-    left: 5%;
   `}
 `;
 
