@@ -1,19 +1,17 @@
 import { useState } from 'react';
-import useRefDimensions from "./useRefDimensions";
-import useTimer, { ACTIONS } from "./useTimer";
-import useWaterfallState from "./useWaterfallState";
+import useRefDimensions from './useRefDimensions';
+import useTimer, { ACTIONS } from './useTimer';
+import useWaterfallState from './useWaterfallState';
 import styled, { css, keyframes } from 'styled-components';
 
 const StyledApp = styled('div')`
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
   padding: 0;
+  position: relative;
 `;
 
 const slideIn = keyframes`
-    0% { transform: translateY(-10vh); opacity: 0; }
+    0% { transform: translateY(-30vh); opacity: 0; }
     10% { opacity: 0.9; }
     100% { opacity: 0; transform: translateY(100vh); }
 `;
@@ -27,18 +25,28 @@ const StyledStartButton = styled('button').attrs({ type: 'button'})`
   font-family: Courier;
   font-size: 2rem;
   font-weight: bold;
+  left: 50%;
   padding: 0.5rem 2rem;
-  position: relative;
-  transition: all 250ms;
-  width: auto;
+  position: fixed;
+  top: 50%;
+  transform: translate3D(-50%, -50%, 0);
+  transition: all 1s;
+  width: 25rem;
   z-index: 1;
 
   &:hover {
     border-color: rgb(0, 255, 0);
   }
+
+  ${({ timerRunning }) => timerRunning && css`
+    font-size: 1rem;
+    width: 12.5rem;
+    top: 95%;
+    left: 5%;
+  `}
 `;
 
-const StyledPooLine = styled('div')`
+const StyledEmojiLine = styled('div')`
   ${({lineWidth}) => css`
     font-size: ${lineWidth * 0.75}px;
     width: ${lineWidth}px;
@@ -48,7 +56,7 @@ const StyledPooLine = styled('div')`
   left: ${({leftPosition}) => leftPosition}px;
   overflow: hidden;
   position: absolute;
-  text-shadow: 0px 0px 5px rgb(0, 255, 0);
+  text-shadow: 0px 0px 8px rgb(0, 255, 0);
   top: ${({topPosition}) => topPosition}px;
 
   animation-duration: ${({animationSpeed}) => animationSpeed}s;
@@ -65,7 +73,7 @@ export default function App() {
   const [runMatrix, setRunMatrix] = useState(false);
   const [appRef, appRefDimensions] = useRefDimensions();
   const [data, addLineData] = useWaterfallState({ pageWidth: appRefDimensions.width, lineVariance, lineWidthBase });
-  const { timerDispatch } = useTimer({
+  const { timerDispatch, timerRunning } = useTimer({
     autoStart: false,
     autoRestart: true,
     callback: () => new Promise((resolve) => { addLineData(); resolve(); }),
@@ -74,19 +82,24 @@ export default function App() {
   });
 
   const handleClick = () => {
-    setRunMatrix(true);
-    timerDispatch({ type: ACTIONS.START_TIMER, payload: 4 });
+    if (!runMatrix) {
+      setRunMatrix(true);
+      timerDispatch({ type: ACTIONS.START_TIMER, payload: 4 });
+    } else if (timerRunning) {
+      timerDispatch({ type: ACTIONS.STOP_TIMER });
+    } else {
+      timerDispatch({ type: ACTIONS.START_TIMER, payload: 4 });
+    }
   }
 
   return (
     <StyledApp ref={appRef}>
-      <StyledStartButton onClick={handleClick}>Enter the Matrix</StyledStartButton>
+      <StyledStartButton onClick={handleClick} timerRunning={timerRunning}>{!timerRunning ? 'Enter the Matrix' : '...nevermind.'}</StyledStartButton>
 
-      {/* I know, the key isn't really unique despite what we talked about in the interview. */}
       {runMatrix && data.map(({emojiCount, ...data}, i) => (
-        <StyledPooLine key={`line-${i}`} {...data}>
+        <StyledEmojiLine {...data}>
           {[...new Array(emojiCount)].map(() => emoji).join(' ')}
-        </StyledPooLine>
+        </StyledEmojiLine>
       ))}
 
     </StyledApp>
