@@ -56,13 +56,14 @@ const StyledEmojiLine = styled('div')`
   overflow: hidden;
   position: absolute;
   text-shadow: 0px 0px 8px rgb(0, 255, 0);
+  transition: all 250ms;
   top: ${({topPosition}) => topPosition}px;
+  z-index: 0;
 
-  animation-duration: ${({animationSpeed}) => animationSpeed}s;
+  animation-duration: ${({animationSpeed, timerRunning}) => timerRunning ? animationSpeed : 1}s;
   animation-fill-mode: forwards;
   animation-name: ${slideIn};
   animation-timing-function: linear;
-  z-index: 0;
 `;
 
 export default function App() {
@@ -96,7 +97,7 @@ export default function App() {
       <StyledStartButton onClick={handleClick} timerRunning={timerRunning}>{!timerRunning ? 'Enter the Matrix' : '...nevermind.'}</StyledStartButton>
 
       {runMatrix && data.map(({emojiCount, ...data}, i) => (
-        <StyledEmojiLine {...data}>
+        <StyledEmojiLine {...data} timerRunning={timerRunning}>
           {[...new Array(emojiCount)].map(() => emoji).join(' ')}
         </StyledEmojiLine>
       ))}
